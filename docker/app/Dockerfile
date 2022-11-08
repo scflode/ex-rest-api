@@ -5,7 +5,7 @@ RUN apt-get update -qq && \
   build-essential\
   curl\
   libpq-dev\
-  #      postgresql-client\
+  postgresql-client\
   git\
   make\
   erlang-crypto\
@@ -17,7 +17,7 @@ WORKDIR /app
 
 RUN mix local.hex --force \
   && mix local.rebar --force \
-  #    && mix archive.install hex phx_new --force \
+  && mix archive.install hex phx_new 1.7.0-rc.0 --force \
   && echo
 
 COPY run.sh /
