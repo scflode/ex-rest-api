@@ -20,10 +20,11 @@ defmodule RestApiWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", RestApiWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", RestApiWeb do
+    pipe_through :api
+
+    resources "/registrations", RegistrationController, except: [:new, :edit]
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:rest_api, :dev_routes) do
