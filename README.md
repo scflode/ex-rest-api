@@ -2,6 +2,8 @@
 
 To start the server run `./dev s`
 
+To stop the server run `./dev st` (`Ctrl-c` out of the IEx session)
+
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Rest API
