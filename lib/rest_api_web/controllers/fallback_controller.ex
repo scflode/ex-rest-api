@@ -21,4 +21,11 @@ defmodule RestApiWeb.FallbackController do
     |> put_view(html: RestApiWeb.ErrorHTML, json: RestApiWeb.ErrorJSON)
     |> render(:"404")
   end
+
+  def call(conn, _) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(html: RestApiWeb.ErrorHTML, json: RestApiWeb.ErrorJSON)
+    |> render(:"400")
+  end
 end

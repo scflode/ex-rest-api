@@ -17,7 +17,11 @@ defmodule RestApiWeb.RegistrationJSON do
 
   defp data(%Registration{} = registration) do
     %{
-      id: registration.id
+      id: registration.id,
+      first_name: registration.first_name,
+      last_name: registration.last_name,
+      inserted_at: registration.inserted_at,
+      updated_at: registration.updated_at
     }
   end
 end
