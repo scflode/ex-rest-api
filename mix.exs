@@ -4,6 +4,7 @@ defmodule RestApi.MixProject do
   def project do
     [
       app: :rest_api,
+      description: "Rest API in Elixir with Phoenix",
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -50,7 +51,8 @@ defmodule RestApi.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:open_api_spex, "~> 3.14"}
     ]
   end
 

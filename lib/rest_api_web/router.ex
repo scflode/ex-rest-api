@@ -12,18 +12,26 @@ defmodule RestApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug OpenApiSpex.Plug.PutApiSpec, module: RestApiWeb.ApiSpec
   end
 
-  scope "/", RestApiWeb do
+  scope "/" do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/", RestApiWeb.PageController, :home
+    get "/docs", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
   end
 
-  scope "/api", RestApiWeb do
+  scope "/api" do
     pipe_through :api
 
-    resources "/registrations", RegistrationController, except: [:new, :edit]
+    get "/registrations", RestApiWeb.RegistrationController, :index
+    post "/registrations", RestApiWeb.RegistrationController, :create
+
+    get "/registrations/:id", RestApiWeb.RegistrationController, :show
+    put "/registrations/:id", RestApiWeb.RegistrationController, :update
+
+    get "/openapi", OpenApiSpex.Plug.RenderSpec, []
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
