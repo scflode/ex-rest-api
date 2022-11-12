@@ -19,7 +19,11 @@ defmodule RestApiWeb.RegistrationControllerTest do
   }
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    {:ok,
+     conn:
+       conn
+       |> put_req_header("accept", "application/json")
+       |> put_req_header("content-type", "application/json")}
   end
 
   describe "index" do
@@ -31,7 +35,8 @@ defmodule RestApiWeb.RegistrationControllerTest do
 
   describe "create registration" do
     test "renders registration when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/registrations", registration: @create_attrs)
+      conn = post(conn, ~p"/api/registrations", @create_attrs)
+
       assert %{"id" => id} = json_response(conn, 201)
 
       conn = get(conn, ~p"/api/registrations/#{id}")
@@ -54,7 +59,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
       conn: conn,
       registration: %Registration{id: id} = registration
     } do
-      conn = put(conn, ~p"/api/registrations/#{registration}", registration: @update_attrs)
+      conn = put(conn, ~p"/api/registrations/#{registration}", @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)
 
       conn = get(conn, ~p"/api/registrations/#{id}")
@@ -65,20 +70,8 @@ defmodule RestApiWeb.RegistrationControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, registration: registration} do
-      conn = put(conn, ~p"/api/registrations/#{registration}", registration: @invalid_attrs)
+      conn = put(conn, ~p"/api/registrations/#{registration}", @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
-
-  describe "delete registration" do
-    setup [:create_registration]
-
-    test "deletes chosen registration", %{conn: conn, registration: registration} do
-      conn = delete(conn, ~p"/api/registrations/#{registration}")
-      assert response(conn, 204)
-
-      conn = get(conn, ~p"/api/registrations/#{registration}")
-      assert json_response(conn, 404)["errors"] == %{"message" => "Not Found"}
     end
   end
 
