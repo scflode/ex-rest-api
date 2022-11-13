@@ -5,19 +5,6 @@ defmodule RestApiWeb.RegistrationControllerTest do
 
   alias RestApi.Onboarding.Registration
 
-  @create_attrs %{
-    first_name: "Jane",
-    last_name: "Doe"
-  }
-  @update_attrs %{
-    first_name: "Jack",
-    last_name: "Done"
-  }
-  @invalid_attrs %{
-    first_name: nil,
-    last_name: nil
-  }
-
   setup %{conn: conn} do
     {:ok,
      conn:
@@ -35,7 +22,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
 
   describe "create registration" do
     test "renders registration when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/registrations", @create_attrs)
+      conn = post(conn, ~p"/api/registrations", valid_request_params())
 
       assert %{"id" => id} = json_response(conn, 201)
 
@@ -47,7 +34,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/registrations", registration: @invalid_attrs)
+      conn = post(conn, ~p"/api/registrations", invalid_request_params())
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -59,7 +46,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
       conn: conn,
       registration: %Registration{id: id} = registration
     } do
-      conn = put(conn, ~p"/api/registrations/#{registration}", @update_attrs)
+      conn = put(conn, ~p"/api/registrations/#{registration}", update_request_params())
       assert %{"id" => ^id} = json_response(conn, 200)
 
       conn = get(conn, ~p"/api/registrations/#{id}")
@@ -70,7 +57,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, registration: registration} do
-      conn = put(conn, ~p"/api/registrations/#{registration}", @invalid_attrs)
+      conn = put(conn, ~p"/api/registrations/#{registration}", invalid_request_params())
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -79,4 +66,13 @@ defmodule RestApiWeb.RegistrationControllerTest do
     registration = registration_fixture()
     %{registration: registration}
   end
+
+  defp valid_request_params(),
+    do: OpenApiSpex.Schema.example(RestApiWeb.Schemas.RegistrationParams.schema())
+
+  defp invalid_request_params(),
+    do: OpenApiSpex.Schema.example(RestApiWeb.Schemas.InvalidRegistrationParams.schema())
+
+  defp update_request_params(),
+    do: OpenApiSpex.Schema.example(RestApiWeb.Schemas.UpdateRegistrationParams.schema())
 end

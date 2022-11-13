@@ -24,6 +24,32 @@ defmodule RestApiWeb.Schemas do
     })
   end
 
+  defmodule RegistrationParams do
+    OpenApiSpex.schema(%{
+      type: :object,
+      properties: %{
+        first_name: %Schema{type: :string, description: "The first name"},
+        last_name: %Schema{type: :string, description: "The last name"}
+      },
+      required: [:first_name, :last_name],
+      example: %{first_name: "Jake", last_name: "Fake"}
+    })
+  end
+
+  defmodule InvalidRegistrationParams do
+    OpenApiSpex.schema(%{
+      ref: RegistrationParams,
+      example: %{first_name: "", last_name: ""}
+    })
+  end
+
+  defmodule UpdateRegistrationParams do
+    OpenApiSpex.schema(%{
+      ref: RegistrationParams,
+      example: %{first_name: "Jack", last_name: "Brake"}
+    })
+  end
+
   defmodule RegistrationResponse do
     OpenApiSpex.schema(%{
       description: "Response schema for a single registration",
@@ -47,18 +73,6 @@ defmodule RestApiWeb.Schemas do
       description: "The list of registrations",
       type: :array,
       items: RestApiWeb.Schemas.Registration
-    })
-  end
-
-  defmodule RegistrationParams do
-    OpenApiSpex.schema(%{
-      type: :object,
-      properties: %{
-        first_name: %Schema{type: :string, description: "The first name"},
-        last_name: %Schema{type: :string, description: "The last name"}
-      },
-      required: [:first_name, :last_name],
-      example: %{first_name: "Jake", last_name: "Fake"}
     })
   end
 
