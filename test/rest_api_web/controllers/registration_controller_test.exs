@@ -1,6 +1,8 @@
 defmodule RestApiWeb.RegistrationControllerTest do
   use RestApiWeb.ConnCase
 
+  import OpenApiSpex.TestAssertions
+
   import RestApi.OnboardingFixtures
 
   alias RestApi.Onboarding.Registration
@@ -22,9 +24,12 @@ defmodule RestApiWeb.RegistrationControllerTest do
 
   describe "create registration" do
     test "renders registration when data is valid", %{conn: conn} do
+      api_spec = RestApiWeb.ApiSpec.spec()
+      schema = RestApiWeb.Schemas.RegistrationResponse.schema()
       conn = post(conn, ~p"/api/registrations", valid_request_params())
 
       assert %{"id" => id} = json_response(conn, 201)
+      assert_schema(schema.example, "RegistrationResponse", api_spec)
 
       conn = get(conn, ~p"/api/registrations/#{id}")
 
@@ -40,7 +45,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
   end
 
   describe "update registration" do
-    setup [:create_registration]
+    setup :create_registration
 
     test "renders registration when data is valid", %{
       conn: conn,
