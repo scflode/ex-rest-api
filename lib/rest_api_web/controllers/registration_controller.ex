@@ -2,12 +2,15 @@ defmodule RestApiWeb.RegistrationController do
   use RestApiWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true, replace_params: false
+  plug OpenApiSpex.Plug.CastAndValidate,
+    replace_params: false,
+    render_error: Plug.JsonErrorRenderer
 
-  alias OpenApiSpex.Schema
+  alias OpenApiSpex.{Example, Schema}
 
   alias RestApiWeb.Schemas.{
     RegistrationParams,
+    UpdateRegistrationParams,
     ErrorResponse,
     RegistrationResponse,
     RegistrationsResponse
@@ -18,7 +21,7 @@ defmodule RestApiWeb.RegistrationController do
 
   action_fallback(RestApiWeb.FallbackController)
 
-  tags(["Customer Onboarding"])
+  tags ["Customer Onboarding"]
 
   operation :index,
     summary: "List registrations",
@@ -42,7 +45,30 @@ defmodule RestApiWeb.RegistrationController do
     description: """
     The description for the endpoint...
     """,
-    request_body: {"Registration params", "application/json", RegistrationParams},
+    request_body:
+      {"Registration params", "application/json", RegistrationParams,
+       examples: %{
+         a_valid: %Example{
+           summary: "Valid input",
+           value: %{
+             first_name: "Jake",
+             last_name: "Fake"
+           }
+         },
+         b_invalid: %Example{
+           summary: "Invalid input",
+           value: %{
+             first_name: 123,
+             last_name: 456
+           }
+         },
+         c_incomplete: %Example{
+           summary: "Incomplete input",
+           value: %{
+             first_name: "John"
+           }
+         }
+       }},
     responses: [
       created: {"Created", "application/json", RegistrationResponse},
       bad_request:
@@ -105,7 +131,30 @@ defmodule RestApiWeb.RegistrationController do
         required: true
       ]
     ],
-    request_body: {"Registration params", "application/json", RegistrationParams},
+    request_body:
+      {"Registration params", "application/json", UpdateRegistrationParams,
+       examples: %{
+         a_valid: %Example{
+           summary: "Valid input",
+           value: %{
+             first_name: "John",
+             last_name: "Fohn"
+           }
+         },
+         b_invalid: %Example{
+           summary: "Invalid input",
+           value: %{
+             first_name: 123,
+             last_name: 456
+           }
+         },
+         c_incomplete: %Example{
+           summary: "Incomplete input",
+           value: %{
+             first_name: "John"
+           }
+         }
+       }},
     responses: [
       ok: {"The registration", "application/json", RegistrationResponse},
       bad_request:

@@ -52,7 +52,9 @@ defmodule RestApi.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:open_api_spex, "~> 3.14"}
+      {:open_api_spex, "~> 3.14"},
+      {:ecto_psql_extras, "~> 0.6"},
+      {:mix_test_watch, "~> 1.1", only: [:dev, :test], runtime: false}
     ]
   end
 
