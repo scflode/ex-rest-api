@@ -19,7 +19,7 @@ defmodule RestApiWeb.RegistrationController do
 
   action_fallback(RestApiWeb.FallbackController)
 
-  tags(["Customer Onboarding"])
+  tags ["Customer Onboarding"]
 
   operation :index,
     summary: "List registrations",

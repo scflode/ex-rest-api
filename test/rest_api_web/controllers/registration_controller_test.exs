@@ -1,6 +1,7 @@
 defmodule RestApiWeb.RegistrationControllerTest do
   use RestApiWeb.ConnCase
 
+  import OpenApiSpex.TestAssertions
   import RestApi.OnboardingFixtures
 
   alias RestApi.Onboarding.Registration
@@ -10,32 +11,46 @@ defmodule RestApiWeb.RegistrationControllerTest do
      conn:
        conn
        |> put_req_header("accept", "application/json")
-       |> put_req_header("content-type", "application/json")}
+       |> put_req_header("content-type", "application/json"),
+     api_spec: RestApiWeb.ApiSpec.spec()}
   end
 
   describe "index" do
-    test "lists all registrations", %{conn: conn} do
-      conn = get(conn, ~p"/api/registrations")
-      assert json_response(conn, 200) == []
+    test "lists all registrations", %{conn: conn, api_spec: api_spec} do
+      json =
+        conn
+        |> get(~p"/api/registrations")
+        |> json_response(200)
+
+      assert_schema(json, "RegistrationsResponse", api_spec)
     end
   end
 
   describe "create registration" do
-    test "renders registration when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/registrations", valid_request_params())
+    test "renders registration when data is valid", %{conn: conn, api_spec: api_spec} do
+      json =
+        conn
+        |> post(~p"/api/registrations", valid_request_params())
+        |> json_response(201)
 
-      assert %{"id" => id} = json_response(conn, 201)
+      assert_schema(json, "RegistrationResponse", api_spec)
+      %{"id" => id} = json
 
-      conn = get(conn, ~p"/api/registrations/#{id}")
+      json =
+        conn
+        |> get(~p"/api/registrations/#{id}", id)
+        |> json_response(200)
 
-      assert %{
-               "id" => ^id
-             } = json_response(conn, 200)
+      assert_schema(json, "RegistrationResponse", api_spec)
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/registrations", invalid_request_params())
-      assert json_response(conn, 422)["errors"] != %{}
+    test "renders errors when data is invalid", %{conn: conn, api_spec: api_spec} do
+      json =
+        conn
+        |> post(~p"/api/registrations", invalid_request_params())
+        |> json_response(422)
+
+      assert_schema(json, "ErrorResponse", api_spec)
     end
   end
 
@@ -44,21 +59,37 @@ defmodule RestApiWeb.RegistrationControllerTest do
 
     test "renders registration when data is valid", %{
       conn: conn,
+      api_spec: api_spec,
       registration: %Registration{id: id} = registration
     } do
-      conn = put(conn, ~p"/api/registrations/#{registration}", update_request_params())
-      assert %{"id" => ^id} = json_response(conn, 200)
+      json =
+        conn
+        |> put(~p"/api/registrations/#{registration}", update_request_params())
+        |> json_response(200)
 
-      conn = get(conn, ~p"/api/registrations/#{id}")
+      assert_schema(json, "RegistrationResponse", api_spec)
 
-      assert %{
-               "id" => ^id
-             } = json_response(conn, 200)
+      %{"id" => ^id} = json
+
+      json =
+        conn
+        |> get(~p"/api/registrations/#{id}")
+        |> json_response(200)
+
+      assert_schema(json, "RegistrationResponse", api_spec)
     end
 
-    test "renders errors when data is invalid", %{conn: conn, registration: registration} do
-      conn = put(conn, ~p"/api/registrations/#{registration}", invalid_request_params())
-      assert json_response(conn, 422)["errors"] != %{}
+    test "renders errors when data is invalid", %{
+      conn: conn,
+      api_spec: api_spec,
+      registration: registration
+    } do
+      json =
+        conn
+        |> put(~p"/api/registrations/#{registration}", invalid_request_params())
+        |> json_response(422)
+
+      assert_schema(json, "ErrorResponse", api_spec)
     end
   end
 
