@@ -29,8 +29,8 @@ defmodule RestApiWeb.Schemas do
     OpenApiSpex.schema(%{
       type: :object,
       properties: %{
-        first_name: %Schema{type: :string, description: "The first name"},
-        last_name: %Schema{type: :string, description: "The last name"}
+        first_name: %Schema{type: :string, description: "The first name", minLength: 1},
+        last_name: %Schema{type: :string, description: "The last name", minLength: 1}
       },
       required: [:first_name, :last_name],
       example: %{first_name: "Jake", last_name: "Fake"}
@@ -46,7 +46,12 @@ defmodule RestApiWeb.Schemas do
 
   defmodule UpdateRegistrationParams do
     OpenApiSpex.schema(%{
-      ref: RegistrationParams,
+      type: :object,
+      properties: %{
+        first_name: %Schema{type: :string, description: "The first name", minLength: 1},
+        last_name: %Schema{type: :string, description: "The last name", minLength: 1}
+      },
+      required: [:first_name, :last_name],
       example: %{first_name: "Jack", last_name: "Brake"}
     })
   end

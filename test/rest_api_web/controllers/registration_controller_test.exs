@@ -48,7 +48,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
       json =
         conn
         |> post(~p"/api/registrations", invalid_request_params())
-        |> json_response(422)
+        |> json_response(400)
 
       assert_schema(json, "ErrorResponse", api_spec)
     end
@@ -87,7 +87,7 @@ defmodule RestApiWeb.RegistrationControllerTest do
       json =
         conn
         |> put(~p"/api/registrations/#{registration}", invalid_request_params())
-        |> json_response(422)
+        |> json_response(400)
 
       assert_schema(json, "ErrorResponse", api_spec)
     end

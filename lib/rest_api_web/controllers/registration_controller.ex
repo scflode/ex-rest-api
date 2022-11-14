@@ -2,7 +2,9 @@ defmodule RestApiWeb.RegistrationController do
   use RestApiWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true, replace_params: false
+  plug OpenApiSpex.Plug.CastAndValidate,
+    replace_params: false,
+    render_error: Plug.JsonErrorRenderer
 
   alias OpenApiSpex.{Example, Schema}
 
@@ -129,7 +131,30 @@ defmodule RestApiWeb.RegistrationController do
         required: true
       ]
     ],
-    request_body: {"Registration params", "application/json", UpdateRegistrationParams},
+    request_body:
+      {"Registration params", "application/json", UpdateRegistrationParams,
+       examples: %{
+         a_valid: %Example{
+           summary: "Valid input",
+           value: %{
+             first_name: "John",
+             last_name: "Fohn"
+           }
+         },
+         b_invalid: %Example{
+           summary: "Invalid input",
+           value: %{
+             first_name: 123,
+             last_name: 456
+           }
+         },
+         c_incomplete: %Example{
+           summary: "Incomplete input",
+           value: %{
+             first_name: "John"
+           }
+         }
+       }},
     responses: [
       ok: {"The registration", "application/json", RegistrationResponse},
       bad_request:
